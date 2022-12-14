@@ -1,5 +1,8 @@
 ; ----------------------------------------------------------------------------------------
 ;     nasm -fmacho64 wordle.s && cc wordle.o -o wordle && ./wordle hello world
+;     hello (candidate word)
+;     world (target word)
+;     bbbgy (black, black, black, green, yellow)
 ; ----------------------------------------------------------------------------------------
 
 
