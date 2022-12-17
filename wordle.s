@@ -67,8 +67,25 @@ CALL_FN %1, %2, %3, %4
 %endmacro
 
     global    _main
-    extern    _puts
     section   .text
+
+_myputs:
+%assign str 8
+STACK_FRAME 8, str
+CALL_FN _str_len, [rbp - str]
+mov rdx, rax
+mov rsi, [rbp - 8]
+mov rdi, 1
+mov rax, 0x2000004
+syscall
+mov rax, 10
+mov [rbp - str], rax
+lea rsi, [rbp - str]
+mov rdi, 1
+mov rdx, 1
+mov rax, 0x2000004
+syscall
+RETURN 0
 
 
 _str_len:                               ; long str_len(char* str) {}
@@ -355,8 +372,8 @@ STACK_FRAME 1072, argc, argv
     mov rdx, [rax + 16]
     mov [rbp - argv_arr + 16], rdx
 
-    CALL_FN _puts, [rbp - argv_arr + 8] ; puts(argv[1]);
-    CALL_FN _puts, [rbp - argv_arr + 16]; puts(argv[2]);
+    CALL_FN _myputs, [rbp - argv_arr + 8] ; puts(argv[1]);
+    CALL_FN _myputs, [rbp - argv_arr + 16]; puts(argv[2]);
 
     lea rax, [rbp - result]             ; get_result(result, buffer_len,
                                         ;                       candidate, target)
@@ -364,11 +381,11 @@ STACK_FRAME 1072, argc, argv
     cmp rax, SUCCESS
     jne main_error
     lea rax, [rbp - result]
-    CALL_FN _puts, rax
+    CALL_FN _myputs, rax
     RETURN SUCCESS
 main_error:
     lea rax, [rel bad_args]
-    CALL_FN _puts, rax                  ; puts(bad_args)
+    CALL_FN _myputs, rax                  ; puts(bad_args)
     RETURN FAILURE                      ; return 0x7fffffff
 
     section   .data
